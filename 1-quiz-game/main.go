@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func loadCsvRecords(filename string) [][]string {
@@ -34,5 +37,31 @@ func main() {
 
 	records := loadCsvRecords(filename)
 
-	fmt.Println(records)
+	correctAnswers := 0
+	answerReader := bufio.NewReader(os.Stdin)
+	for questionNumber, record := range records {
+		question := record[0]
+		answer := record[1]
+
+		var userAnswer string
+		for {
+			fmt.Printf("%s: %s ->  ", strconv.Itoa(questionNumber+1), question)
+
+			rawAnswer, err := answerReader.ReadString('\n')
+			if err != nil {
+				fmt.Println("Error: try again...")
+				continue
+			}
+
+			userAnswer = strings.TrimSpace(rawAnswer)
+
+			break
+		}
+
+		if userAnswer == answer {
+			correctAnswers++
+		}
+
+	}
+	fmt.Printf("Correct Answers: %s\n", strconv.Itoa(correctAnswers))
 }
