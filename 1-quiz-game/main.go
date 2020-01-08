@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/csv"
+	"flag"
 	"fmt"
 	"os"
 	"strconv"
@@ -73,9 +74,13 @@ func playGame(records [][]string) chan int {
 }
 
 func main() {
-	filename := "problems.csv"
+	// flag definitions
+	filename := flag.String("filename", "problems.csv", "csv containing the questions")
 
-	records := loadCsvRecords(filename)
+	// parse each flag value
+	flag.Parse()
+
+	records := loadCsvRecords(*filename)
 
 	// channel that signals once the game has ended
 	gameChan := playGame(records)
