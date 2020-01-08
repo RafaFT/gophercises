@@ -5,13 +5,14 @@ import (
 	"encoding/csv"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func loadCsvRecords(filename string) [][]string {
+func loadCsvRecords(filename string, shuffle bool) [][]string {
 	// try to open the file, and defer it's closure
 	// https://golang.org/pkg/os
 	file, err := os.Open(filename)
@@ -29,6 +30,13 @@ func loadCsvRecords(filename string) [][]string {
 	records, err := csvReader.ReadAll()
 	if err != nil {
 		panic(err)
+	}
+
+	// todo: implement a better (real) shuffle later on
+	if shuffle {
+		rand.Shuffle(len(records), func(i, j int) {
+			records[i], records[j] = records[j], records[i]
+		})
 	}
 
 	return records
@@ -77,11 +85,12 @@ func main() {
 	// flag definitions
 	timeOut := flag.Int("timeout", 30, "number of seconds before game time out")
 	filename := flag.String("filename", "problems.csv", "csv containing the questions")
+	shuffle := flag.Bool("shuffle", false, "if true, shuffes all questions")
 
 	// parse each flag value
 	flag.Parse()
 
-	records := loadCsvRecords(*filename)
+	records := loadCsvRecords(*filename, *shuffle)
 
 	// channel that signals once the game has ended
 	gameChan := playGame(records)
