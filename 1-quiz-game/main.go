@@ -82,15 +82,18 @@ func playGame(records [][]string) chan int {
 }
 
 func main() {
-	// flag definitions
+	// flags
 	timeOut := flag.Int("timeout", 30, "number of seconds before game time out")
 	filename := flag.String("filename", "problems.csv", "csv containing the questions")
 	shuffle := flag.Bool("shuffle", false, "if true, shuffes all questions")
-
-	// parse each flag value
 	flag.Parse()
 
+	// load the records (questions and answers) from filename before game
 	records := loadCsvRecords(*filename, *shuffle)
+
+	// The program should only start after the user has press enter
+	fmt.Println("Press 'Enter' to start the game...")
+	bufio.NewReader(os.Stdin).ReadBytes('\n')
 
 	// channel that signals once the game has ended
 	gameChan := playGame(records)
