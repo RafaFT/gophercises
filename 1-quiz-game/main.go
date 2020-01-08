@@ -75,6 +75,7 @@ func playGame(records [][]string) chan int {
 
 func main() {
 	// flag definitions
+	timeOut := flag.Int("timeout", 30, "number of seconds before game time out")
 	filename := flag.String("filename", "problems.csv", "csv containing the questions")
 
 	// parse each flag value
@@ -89,7 +90,7 @@ func main() {
 	case correctAnswers := <-gameChan:
 		fmt.Printf("\nCorrect Answers: %s\n", strconv.Itoa(correctAnswers))
 		fmt.Println("Game Over")
-	case <-time.After(30 * time.Second):
+	case <-time.After(time.Duration(*timeOut) * time.Second):
 		fmt.Println("\n\nTime out")
 	}
 }
